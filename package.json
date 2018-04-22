@@ -3,5 +3,20 @@
     "discord.js": "^11.3.2",
     "request-promise-native": "^1.0.5",
     "uws": "^9.147.0"
-  }
+  },
+  "name": "emoji-scouter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "emoji"
+  ],
+  "author": "haykam821",
+  "license": "MIT",
+  "description": ""
 }
