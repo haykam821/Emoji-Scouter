@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "discord.js": "^11.3.2",
+    "request": "^2.85.0",
     "request-promise-native": "^1.0.5",
     "uws": "^9.147.0"
   },
