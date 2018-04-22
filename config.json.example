@@ -1,3 +1,4 @@
 {
-    "token": "bot token from application page"
+    "token": "bot token from application page",
+    "prefix": "e!"
 }
