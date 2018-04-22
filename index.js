@@ -8,17 +8,39 @@ bot.login(config.token);
 const rq = require("request-promise-native");
 
 // Build an emojiCache
-const emojiCache = [];
+let emojiCache = [];
 rq("https://discordemoji.com/api").then(data => {
-    emojiCache.push(JSON.parse(data));
+    emojiCache = emojiCache.concat(JSON.parse(data).map(item => {
+        return {
+            name: item.slug,
+            externalName: `DiscordEmoji.com`,
+            externalIcon: `https://discordemoji.com/assets/img/ogicon.png`,
+            url: `https://discordemoji.com/assets/emoji/${item.slug}.png`,
+        }
+    }));
     process.stdout.write("Got data from DiscordEmoji.com!\n");
 });
 
+function sendError(message, channel, client = bot, useEmbed = true) {
+    if (channel.permissionsFor(client.user).has("EMBED_LINKS") && useEmbed) {
+        channel.send("", {
+            embed: {
+                title: "Error",
+                description: message,
+                color: 0xCC0000,
+            }
+        });
+    } else {
+        channel.send(message);
+    }
+}
+
 bot.on("ready", () => {
     process.stdout.write("Bot is ready!\n");
+    emojiCache = emojiCache.concat(bot.emojis.array());
 });
 
-bot.on("message", (msg) => {
+bot.on("message", async (msg) => {
     const message = msg.content;
     if (!message.startsWith(config.prefix)) return;
 
@@ -28,13 +50,37 @@ bot.on("message", (msg) => {
 
     if (command === "find") {
         if (args.length < 1) {
-            msg.channel.send(":upside_down_face: Try adding some keywords, like `banana`.");
+            sendError(":upside_down_face: You must add some keywords to search for, such as `banana`.", msg.channel, bot);
         } else if (emojiCache.length < 1) {
-            msg.channel.send(":beetle: Emoji data is still being fetched.")
+            sendError(":beetle: Emoji data is still being fetched.", msg.channel, bot);
         } else {
-            msg.channel.send(emojiCache.filter(item => {
-                return args.some(value => item.slug.indexOf(value) > -1);
-            })[0].slug);
+            const filtered = emojiCache.filter(item => {
+                return args.some(value => {
+                    return item.name.indexOf(value) > -1;
+                });
+            });
+            if (filtered.length < 1) {
+                sendError(":sweat_smile: There aren't any results for that.", msg.channel, bot);
+            } else {
+                const femoji = filtered[0];
+                const provicon = femoji.externalIcon ? femoji.externalIcon : (femoji.guild ? femoji.guild.iconURL : null);
+
+                await msg.channel.send("", {
+                    embed: {
+                        title: `\`${femoji.name}\``,
+                        description: `This is the first result of ${filtered.length} emoji in the database.`,
+                        thumbnail: {
+                            url: femoji.url,
+                        },
+                        author: {
+                            name: femoji.externalName ? femoji.externalName : (femoji.guild ? femoji.guild.name : "Unknown Source"),
+                            icon_url: provicon,
+                        },
+                        color: 0xFFCC4D,
+                    },
+                });
+
+            }
         }
     } else if (command === "help" || command === "info") {
         msg.channel.send([
