@@ -15,7 +15,7 @@ rq("https://discordemoji.com/api").then(data => {
             name: item.slug,
             externalName: `DiscordEmoji.com`,
             externalIcon: `https://discordemoji.com/assets/img/ogicon.png`,
-            link: "",
+            link: `https://discordemoji.com/emoji/${item.slug}/`,
             url: `https://discordemoji.com/assets/emoji/${item.slug}.${item.category === 8 ? "gif" : "png"}`,
         }
     }));
@@ -73,6 +73,7 @@ bot.on("message", async (msg) => {
                         thumbnail: {
                             url: femoji.url,
                         },
+                        url: femoji.link,
                         author: {
                             name: femoji.externalName ? femoji.externalName : (femoji.guild ? femoji.guild.name : "Unknown Source"),
                             icon_url: provicon,
