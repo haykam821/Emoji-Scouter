@@ -68,7 +68,7 @@ bot.on("message", async (msg) => {
                 await msg.channel.send("", {
                     embed: {
                         title: `\`${femoji.name}\``,
-                        description: `This is the first result of ${filtered.length} emoji in the database.`,
+                        description: `This is the first of ${filtered.length} matching emoji in the database.`,
                         thumbnail: {
                             url: femoji.url,
                         },
