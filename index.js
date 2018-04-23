@@ -15,7 +15,8 @@ rq("https://discordemoji.com/api").then(data => {
             name: item.slug,
             externalName: `DiscordEmoji.com`,
             externalIcon: `https://discordemoji.com/assets/img/ogicon.png`,
-            url: `https://discordemoji.com/assets/emoji/${item.slug}.png`,
+            link: "",
+            url: `https://discordemoji.com/assets/emoji/${item.slug}.${item.category === 8 ? "gif" : "png"}`,
         }
     }));
     process.stdout.write("Got data from DiscordEmoji.com!\n");
